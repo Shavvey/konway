@@ -1,7 +1,9 @@
-MAIN=src/main.kt
+MAIN=src/main/*.kt
 EXEC=konway
 
-all: src/main.kt
+all: make run
+
+make: $(MAIN)
 	kotlinc $(MAIN) -include-runtime -d out/$(EXEC).jar
 
 run: out/$(EXEC).jar
