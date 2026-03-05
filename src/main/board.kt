@@ -1,8 +1,20 @@
 package src.main
 
-class Board(var rows: Int, var cols: Int) {
-  var initialState: State = State.ALIVE
-  var tiles: Array<Array<State>> = Array(rows) { Array(cols) { initialState } }
+import kotlin.random.Random
+
+class Board(var rows: Int, var cols: Int, var numPoints: Int = 3) {
+  var tiles: Array<Array<State>> = Array(rows) { Array(cols) { State.DEAD } }
+
+  init {
+    // make random konway cells alive
+    for (p in 0..numPoints) {
+      var i = Random.Default.nextInt() % rows
+      var j = Random.Default.nextInt() % cols
+      i = if (i > 0) i else -i
+      j = if (j > 0) j else -j
+      tiles[i][j] = State.ALIVE
+    }
+  }
 
   fun display() {
     for (i in 0..rows - 1) {
