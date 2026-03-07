@@ -1,21 +1,12 @@
 package src.main
 
-import kotlin.random.Random
-
-class Board(var rows: Int, var cols: Int, var numPoints: Int = 3 * rows) {
+class Board(var rows: Int, var cols: Int) {
   var tiles: Array<Array<State>> = Array(rows) { Array(cols) { State.DEAD } }
 
   init {
-    // make random konway cells alive
-    for (p in 0..numPoints) {
-      // generate random point indices on the board
-      var i = Random.Default.nextInt() % rows
-      var j = Random.Default.nextInt() % cols
-      // clamp to positive vals
-      i = if (i > 0) i else -i
-      j = if (j > 0) j else -j
-      tiles[i][j] = State.ALIVE
-    }
+    tiles[1][2] = State.ALIVE
+    tiles[2][2] = State.ALIVE
+    tiles[3][2] = State.ALIVE
   }
 
   fun display() {
@@ -39,11 +30,12 @@ class Board(var rows: Int, var cols: Int, var numPoints: Int = 3 * rows) {
   }
 
   fun update() {
+    val neighbors_arr = get_neighbors()
     for (i in 0..rows - 1) {
       for (j in 0..cols - 1) {
         // get current state and number of alive neighbors
         val state = tiles[i][j]
-        val neighbors = neighbors(i, j)
+        val neighbors = neighbors_arr[i][j]
         when (state) {
           State.ALIVE -> {
             // any alive cell with more than 3 neighbors dies
@@ -66,20 +58,35 @@ class Board(var rows: Int, var cols: Int, var numPoints: Int = 3 * rows) {
     }
   }
 
-  // given coords of a cell find all alive neighbors
-  fun neighbors(x: Int, y: Int): Int {
-    var neighbors: Int = 0
-    for (dx in -1..1) {
-      for (dy in -1..1) {
-        val i = mod(x + dx, rows)
-        val j = mod(y + dy, cols)
-        if (tiles[i][j] == State.ALIVE) neighbors++
+  // return all the neighbors for each cell in board
+  fun get_neighbors(): Array<Array<Int>> {
+    var neighbors_arr: Array<Array<Int>> = Array(rows) { Array(cols) { 0 } }
+    for (i in 0..rows - 1) {
+      for (j in 0..cols - 1) {
+        if (tiles[i][j] == State.ALIVE) neighbors_arr[i][j] -= 1
+        for (r in -1..1) {
+          for (s in -1..1) {
+            val x = mod(i + r, rows)
+            val y = mod(j + s, cols)
+            if (tiles[x][y] == State.ALIVE) {
+              neighbors_arr[i][j] += 1
+            }
+          }
+        }
       }
     }
-    return neighbors
+    return neighbors_arr
   }
 }
 
 fun mod(a: Int, b: Int): Int {
   return (a % b + b) % b
+}
+
+fun print_neighbor_arr(neighbors_arr: Array<Array<Int>>) {
+  neighbors_arr.forEach {
+    print("[")
+    it.forEach { print(it) }
+    println("]")
+  }
 }
