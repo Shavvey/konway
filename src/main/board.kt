@@ -4,6 +4,7 @@ class Board(var rows: Int, var cols: Int) {
   var tiles: Array<Array<State>> = Array(rows) { Array(cols) { State.DEAD } }
 
   init {
+    // Example initial board state, 2 period blinker
     tiles[1][2] = State.ALIVE
     tiles[2][2] = State.ALIVE
     tiles[3][2] = State.ALIVE
@@ -33,22 +34,22 @@ class Board(var rows: Int, var cols: Int) {
     val neighbors_arr = get_neighbors()
     for (i in 0..rows - 1) {
       for (j in 0..cols - 1) {
-        // get current state and number of alive neighbors
+        // Get the current state of cell pointed to by (i,j)
         val state = tiles[i][j]
         val neighbors = neighbors_arr[i][j]
         when (state) {
           State.ALIVE -> {
-            // any alive cell with more than 3 neighbors dies
+            // Any alive cell with more than 3 neighbors dies
             if (neighbors > 3) {
               tiles[i][j] = State.DEAD
             }
-            // any alive cell with less than 2 neighbors also dies
+            // Any alive cell with less than 2 neighbors also dies
             if (neighbors < 2) {
               tiles[i][j] = State.DEAD
             }
           }
           State.DEAD -> {
-            // any dead cell with become alive if they have exactly three neighbors
+            // Any dead cell will become alive if they have exactly three neighbors
             if (neighbors == 3) {
               tiles[i][j] = State.ALIVE
             }
@@ -58,7 +59,7 @@ class Board(var rows: Int, var cols: Int) {
     }
   }
 
-  // return all the neighbors for each cell in board
+  // Return all the neighbors for each cell inside the board
   fun get_neighbors(): Array<Array<Int>> {
     var neighbors_arr: Array<Array<Int>> = Array(rows) { Array(cols) { 0 } }
     for (i in 0..rows - 1) {
